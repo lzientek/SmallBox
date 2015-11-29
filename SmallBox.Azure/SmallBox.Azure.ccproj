@@ -38,12 +38,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SmallBox.BackupWorkerRoleContent" />
-    <Folder Include="Smallbox.StorageRoleContent\" />
     <Folder Include="SmallBox.WebServiceContent\" />
   </ItemGroup>
   <ItemGroup>
     <DiagnosticsConfiguration Include="SmallBox.BackupWorkerRoleContent\diagnostics.wadcfgx" />
-    <DiagnosticsConfiguration Include="Smallbox.StorageRoleContent\diagnostics.wadcfgx" />
     <DiagnosticsConfiguration Include="SmallBox.WebServiceContent\diagnostics.wadcfgx" />
   </ItemGroup>
   <ItemGroup>
@@ -61,7 +59,7 @@
       <Private>True</Private>
       <RoleType>Web</RoleType>
       <RoleName>SmallBox.WebService</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+      <UpdateDiagnosticsConnectionStringOnPublish>False</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
   </ItemGroup>
   <!-- Import the target files for this project template -->

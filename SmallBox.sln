@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmallBox.BackupWorkerRole",
 EndProject
 Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "SmallBox.Azure", "SmallBox.Azure\SmallBox.Azure.ccproj", "{23408914-2CF1-4C27-AA03-944E351712AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmallBox.DataBlobStorage", "SmallBox.DataBlobStorage\SmallBox.DataBlobStorage.csproj", "{85C81265-CA86-4C3D-93B9-7AC54FCD20AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmallBox.Storage", "SmallBox.Storage\SmallBox.Storage.csproj", "{85C81265-CA86-4C3D-93B9-7AC54FCD20AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
