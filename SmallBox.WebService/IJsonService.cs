@@ -36,7 +36,7 @@ namespace SmallBox.WebService
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "zip/{*folderPath}")]
-        void ZipFolder(string folderPath);
+        Task<UploadFileModel> ZipFolder(string folderPath);
 
 
         [OperationContract]

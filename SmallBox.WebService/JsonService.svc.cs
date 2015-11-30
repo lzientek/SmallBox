@@ -69,9 +69,15 @@ namespace SmallBox.WebService
         /// zip a folder and save it the Archives root folder
         /// </summary>
         /// <param name="folderPath">folder name to zip</param>
-        public void ZipFolder(string folderPath)
+        public async Task<UploadFileModel> ZipFolder(string folderPath)
         {
-            _provider.ZipFolder(folderPath);
+            var result = await _provider.ZipFolder(folderPath);
+            return new UploadFileModel
+            {
+                FilePath = "Archives/",
+                FileName = result.Item1,
+                Length = result.Item2
+            };
         }
 
         /// <summary>

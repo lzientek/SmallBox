@@ -150,8 +150,10 @@ namespace SmallBox.Storage.Provider
         /// Zip a folder and save it in the archive folder
         /// </summary>
         /// <param name="folderPath">name of the folder to zip</param>
-        public async void ZipFolder(string folderPath)
+        /// <returns>return file name and file size in a tuple</returns>
+        public async Task<Tuple<string, long>> ZipFolder(string folderPath)
         {
+            //download files to zip
             var folder = _container.GetDirectoryReference(folderPath);
             List<ZipResult> files = new List<ZipResult>();
             foreach (var listBlobItem in folder.ListBlobs(true).OfType<CloudBlockBlob>().AsParallel())
@@ -160,7 +162,16 @@ namespace SmallBox.Storage.Provider
                 await listBlobItem.DownloadToStreamAsync(stream);
                 files.Add(new ZipResult() { Stream = stream, FullName = listBlobItem.Name });
             }
-            ZipHelper.Zip(files);
+
+            //save the files in a zip (stream)
+            using (var zipStream = await ZipHelper.Zip(files))
+            {
+                //upload the zip to azure
+                var archivesZipName = string.Format("{0}.zip", Path.Combine("Archives", folderPath.Replace('/', '_').Replace('\\', '_')));
+                var archivesZipBlob = _container.GetBlockBlobReference(archivesZipName);
+                await archivesZipBlob.UploadFromStreamAsync(zipStream);
+                return new Tuple<string, long>(Path.GetFileName(archivesZipName), zipStream.Length);
+            }
         }
 
 
