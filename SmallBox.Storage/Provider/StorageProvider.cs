@@ -160,20 +160,24 @@ namespace SmallBox.Storage.Provider
             {
                 var stream = new MemoryStream();
                 await listBlobItem.DownloadToStreamAsync(stream);
-                files.Add(new ZipResult() { Stream = stream, FullName = listBlobItem.Name });
+                files.Add(new ZipResult { Stream = stream, FullName = listBlobItem.Name });
             }
 
+            return await UploadZip(Path.Combine("Archives", folderPath.Replace('/', '_').Replace('\\', '_')), files);
+        }
+
+        private async Task<Tuple<string, long>> UploadZip(string savePath, List<ZipResult> files)
+        {
             //save the files in a zip (stream)
             using (var zipStream = await ZipHelper.Zip(files))
             {
                 //upload the zip to azure
-                var archivesZipName = string.Format("{0}.zip", Path.Combine("Archives", folderPath.Replace('/', '_').Replace('\\', '_')));
+                var archivesZipName = string.Format("{0}.zip", savePath);
                 var archivesZipBlob = _container.GetBlockBlobReference(archivesZipName);
                 await archivesZipBlob.UploadFromStreamAsync(zipStream);
                 return new Tuple<string, long>(Path.GetFileName(archivesZipName), zipStream.Length);
             }
         }
-
 
 
         /// <summary>
@@ -188,6 +192,38 @@ namespace SmallBox.Storage.Provider
             await blob.DownloadToStreamAsync(value);
             value.Position = 0;
             return new FileToDownload() { Data = value, ContentType = blob.Properties.ContentType };
+        }
+
+        /// <summary>
+        /// Zip entire blob container in the backup folder
+        /// </summary>
+        /// <returns>success</returns>
+        public async Task<bool> ZipAllToBackup()
+        {
+            var files = new List<ZipResult>();
+            try
+            {
+                foreach (var listBlobItem in _container.ListBlobs(null, true).OfType<CloudBlockBlob>().AsParallel())
+                {
+                    if (!listBlobItem.Name.TrimStart('/', '\\').StartsWith("Backup"))
+                    {
+                        var stream = new MemoryStream();
+                        await listBlobItem.DownloadToStreamAsync(stream);
+                        files.Add(new ZipResult { Stream = stream, FullName = listBlobItem.Name });
+                    }
+                }
+
+
+                var now = DateTime.Now;
+                await UploadZip(Path.Combine("Backup",
+                    string.Format("backup_{0}_{1}-{2}-{3}", now.DayOfYear, now.Hour, now.Minute, now.Second))
+                                    , files);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

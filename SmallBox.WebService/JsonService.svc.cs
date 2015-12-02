@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Threading.Tasks;
 using SmallBox.Storage.Models.FolderRes;
@@ -34,7 +35,14 @@ namespace SmallBox.WebService
         /// <returns></returns>
         public FolderResult ListFolder(string folderPath)
         {
-            return _provider.GetFilesFromFolder(folderPath);
+            try
+            {
+                return _provider.GetFilesFromFolder(folderPath);
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
         /// <summary>
@@ -48,17 +56,17 @@ namespace SmallBox.WebService
             var webOperationContext = WebOperationContext.Current.IncomingRequest;
             //verify folder and file name
             var fileName = Path.GetFileName(filePath);
-            if (fileName == null) { throw new Exception("Invalid path, the path doesn't contains any file name."); }
+            if (fileName == null) { throw new FaultException("Invalid path, the path doesn't contains any file name."); }
 
             var path = filePath.Replace(fileName, "");
             if (string.IsNullOrWhiteSpace(path) || path == "/" || path == @"\")
             {
-                throw new Exception("Invalid upload folder, (a file cannot be saved in the root folder).");
+                throw new FaultException("Invalid upload folder, (a file cannot be saved in the root folder).");
             }
 
             //upload the file to Azure
             var result = await _provider.SaveFile(path, fileName, file, webOperationContext.ContentType);
-            if (!result) { throw new Exception("Unexpected Error during the upload of the file."); }
+            if (!result) { throw new FaultException("Unexpected Error during the upload of the file."); }
 
             //create the return object
             var upload = new UploadFileModel { FilePath = path, FileName = fileName, Length = webOperationContext.ContentLength };
@@ -89,7 +97,7 @@ namespace SmallBox.WebService
         {
             if (Path.GetExtension(zipPath) != ".zip")
             {
-                throw new Exception("Not a valid file to download");
+                throw new FaultException("Not a valid file to download");
             }
             var path = zipPath.TrimStart('/', '\\');
             if (!path.StartsWith("Archives"))

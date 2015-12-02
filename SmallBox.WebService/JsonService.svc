@@ -1,1 +1,1 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="SmallBox.WebService.JsonService" CodeBehind="JsonService.svc.cs" %>
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="SmallBox.WebService.JsonService" CodeBehind="JsonService.svc.cs" Factory="SmallBox.WebService.ServiceHostFactoryPerso" %>

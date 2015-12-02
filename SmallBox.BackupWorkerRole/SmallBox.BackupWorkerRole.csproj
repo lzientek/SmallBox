@@ -83,6 +83,12 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SmallBox.Storage\SmallBox.Storage.csproj">
+      <Project>{85C81265-CA86-4C3D-93B9-7AC54FCD20AF}</Project>
+      <Name>SmallBox.Storage</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
